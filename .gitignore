@@ -1,0 +1,7 @@
+venv
+build
+dist
+vcf2neofox.egg-info
+**/__pycache__
+.idea
+.tox/
