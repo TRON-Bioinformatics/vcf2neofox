@@ -1,0 +1,24 @@
+# this is an example file for configuring the ucleotide_to_peptide script
+# comment lines start with '#' and are ignored (also empty lines)
+#
+# configuration options are stored as key-value pairs, one per line
+# keys and values are separated by '='
+
+mutation_set_output = mutation_set_exp.txt
+environment_size = 300
+repeat_bed = /projects/data/human/hg19_repeatmasker.bed
+ref_bed =  /projects/data/human/hg19_ucsc_junctions/ucsc_genes_hg19.bed
+genome_2bit = /projects/data/human/hg19.2bit
+xref_table = /projects/data/human/hg19_ucsc_junctions/kgXref_hg19.tab,0,4
+gene_expression = 
+exon_expression = 
+expression_sep = 
+organism=human
+fdr_files=
+mhc_I_selection=
+mhc_II_selection=
+dbsnp_file=/projects/data/dbsnp/snp137.txt
+skip_mhc=
+data_set_names=
+samtools_bin=
+nprocs_IEDB=1
