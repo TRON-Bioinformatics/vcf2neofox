@@ -1,9 +1,13 @@
 import argparse
+
+import neofox.model.conversion
+
 import vcf2neofox
 import logging
 import vcf2neofox.modulation_tools as tools
 import vcf2neofox.data_loading as data_loading
 from cyvcf2 import VCF
+from neofox.model.neoantigen import Neoantigen, Mutation
 
 epilog = "Copyright (c) 2022 TRON gGmbH (See LICENSE for licensing details)"
 
@@ -24,7 +28,7 @@ def vcf2neofox_cli():
     
     # Load VCF
     vcf = VCF(vcf_file)
-    epitope_table = []
+    neoantigens = []
     # Iterate variants
     for v in vcf:
         
@@ -54,14 +58,14 @@ def vcf2neofox_cli():
             normal_protein = tools.translate(dna_sequence, strand)
             mutated_protein = tools.translate(mutated_sequence, strand)
             
-            neoepitope = tools.get_epitopes(normal_protein, mutated_protein)
+            neoantigen = tools.build_neoantigen(normal_protein, mutated_protein)
             
             # Create output table
-            if neoepitope is not None:
-                chrom_table.append(variant.CHROM)
-                pos_table.append(variant.POS)
-                transcript_table.append(tr_id)
-                epitope_table.append(neoepitope)
+            if neoantigen is not None:
+                neoantigens.append(neoantigen)
 
-    print(epitope_table)
+    # writes a CSV with neoantigens
+    neoantigens_df = neofox.model.conversion.ModelConverter().annotations2table(neoantigens)
+    neoantigens_df.to_csv('your_neoantigens', sep='\t', index=False)
+
     logging.info("VCF2neofox finished!")
