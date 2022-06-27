@@ -1,8 +1,8 @@
 import argparse
 import vcf2neofox
 import logging
-import .modulation_tools as tools
-import .data_loading as data_loading
+import vcf2neofox.modulation_tools as tools
+import vcf2neofox.data_loading as data_loading
 from cyvcf2 import VCF
 
 epilog = "Copyright (c) 2022 TRON gGmbH (See LICENSE for licensing details)"
