@@ -21,7 +21,7 @@ jobs:
         sudo apt-get update
         sudo apt-get --assume-yes install build-essential libcurl4-openssl-dev libz-dev liblzma-dev
         python -m pip install --upgrade pip
-        pip install setuptools wheel
+        pip install setuptools wheel cython
         # this is needed by cyvcf2 and pysam
         conda install htslib=1.14
     - name: Install vafator
