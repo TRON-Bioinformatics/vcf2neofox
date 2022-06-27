@@ -2,8 +2,18 @@
 
 This Python package intends to transform a given VCF into a set of neoantigens to annotate with NeoFox.
 
+## User guide
 
-## How to build
+### How to run
+
+Run from the command line:
+```
+vcf2neofox --help
+```
+
+## Developer guide
+
+### How to build
 
 Build the package:
 ```
@@ -17,10 +27,9 @@ Install the package with pip:
 pip install dist/vcf2neofox-x.y.z-py3-none-any.whl
 ```
 
-## How to run
+### How to run the unit tests
 
-Run from the command line:
 ```
-vcf2neofox --help
+python -m unittest discover vcf2neofox.tests
 ```
 
