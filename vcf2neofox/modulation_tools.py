@@ -72,19 +72,19 @@ def translate(dna, strand):
 
 
 # Generate epitope sequence
-def build_neoantigen(seq_mutated_sequence, seq_dna_sequence) -> Neoantigen:
+def build_neoantigen(seq_mutated_sequence: str, seq_wt_sequence: str) -> Neoantigen:
     # Find the mutated aminoacid in the protein and generate the neoepitopes
     aa_position = 0
-    for ref, alt in zip(seq_dna_sequence, seq_mutated_sequence):
+    for ref, alt in zip(seq_wt_sequence, seq_mutated_sequence):
         if ref != alt:
             break
         aa_position += 1
     
     # Skip synonymous variants
     neoantigen = None
-    if(aa_position != len(seq_dna_sequence)):
-        mutated_xmer = seq_mutated_sequence[aa_position - 13: aa_position + 14]
-        wt_xmer = seq_dna_sequence[aa_position - 13: aa_position + 14]
+    if(aa_position != len(seq_wt_sequence)):
+        mutated_xmer = seq_mutated_sequence[max(aa_position - 13, 0): min(aa_position + 14, len(seq_wt_sequence))]
+        wt_xmer = seq_wt_sequence[max(aa_position - 13, 0): min(aa_position + 14, len(seq_wt_sequence))]
         neoantigen = Neoantigen(
             mutation=Mutation(
                 mutated_xmer=mutated_xmer,
