@@ -7,14 +7,16 @@ import logging
 import vcf2neofox.modulation_tools as tools
 import vcf2neofox.data_loading as data_loading
 from cyvcf2 import VCF
-from neofox.model.neoantigen import Neoantigen, Mutation
 
 epilog = "Copyright (c) 2022 TRON gGmbH (See LICENSE for licensing details)"
+
 
 def vcf2neofox_cli():
     # set up logger
     parser = argparse.ArgumentParser(description="vcf2neofox v{}".format(vcf2neofox.VERSION),
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter, epilog=epilog)
+    parser.add_argument("--output-table", dest="output_table", action="store",
+                        help="The path to the output table in NeoFox format", required=True)
     # TODO: add arguments
     args = parser.parse_args()
     
@@ -66,6 +68,6 @@ def vcf2neofox_cli():
 
     # writes a CSV with neoantigens
     neoantigens_df = neofox.model.conversion.ModelConverter().annotations2table(neoantigens)
-    neoantigens_df.to_csv('your_neoantigens', sep='\t', index=False)
+    neoantigens_df.to_csv(args.output_table, sep='\t', index=False)
 
     logging.info("VCF2neofox finished!")
