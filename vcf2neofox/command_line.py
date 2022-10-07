@@ -19,7 +19,7 @@ def vcf2neofox_cli():
                         help="The path to the output table in NeoFox format", required=True)
     parser.add_argument(
         "--patient-id",
-        dest="patients_id",
+        dest="patient_id",
         help="Patient identifier",
         required=True,
     )
