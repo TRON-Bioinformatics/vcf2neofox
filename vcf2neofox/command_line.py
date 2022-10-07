@@ -80,8 +80,12 @@ def vcf2neofox_cli():
             
             normal_protein = tools.translate(dna_sequence, strand)
             mutated_protein = tools.translate(mutated_sequence, strand)
-            
-            neoantigen = tools.build_neoantigen(normal_protein, mutated_protein, patient_identifier=args.patient_id)
+
+            try:
+                neoantigen = tools.build_neoantigen(normal_protein, mutated_protein, patient_identifier=args.patient_id)
+            except ValueError as ex:
+                # skip failing Neoantigen (eg: sequences containing * or invalid AAs)
+                continue
             
             # Create output table
             if neoantigen is not None:
