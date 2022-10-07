@@ -1,6 +1,7 @@
 from Bio.Seq import Seq
 from cyvcf2 import VCF
-from neofox.model.neoantigen import Neoantigen, Mutation
+from neofox.model.factories import NeoantigenFactory
+from neofox.model.neoantigen import Neoantigen
 
 
 def get_overlapping_transcripts(gtf, VCF_item):
@@ -72,7 +73,7 @@ def translate(dna, strand):
 
 
 # Generate epitope sequence
-def build_neoantigen(seq_mutated_sequence: str, seq_wt_sequence: str) -> Neoantigen:
+def build_neoantigen(seq_mutated_sequence: str, seq_wt_sequence: str, patient_identifier: str) -> Neoantigen:
     # Find the mutated aminoacid in the protein and generate the neoepitopes
     aa_position = 0
     for ref, alt in zip(seq_wt_sequence, seq_mutated_sequence):
@@ -85,11 +86,10 @@ def build_neoantigen(seq_mutated_sequence: str, seq_wt_sequence: str) -> Neoanti
     if(aa_position != len(seq_wt_sequence)):
         mutated_xmer = seq_mutated_sequence[max(aa_position - 13, 0): min(aa_position + 14, len(seq_wt_sequence))]
         wt_xmer = seq_wt_sequence[max(aa_position - 13, 0): min(aa_position + 14, len(seq_wt_sequence))]
-        neoantigen = Neoantigen(
-            mutation=Mutation(
-                mutated_xmer=mutated_xmer,
-                wild_type_xmer=wt_xmer),
-
+        neoantigen = NeoantigenFactory.build_neoantigen(
+            mutated_xmer=mutated_xmer,
+            wild_type_xmer=wt_xmer,
+            patient_identifier=patient_identifier
         )
 
     return neoantigen

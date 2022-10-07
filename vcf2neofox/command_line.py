@@ -17,16 +17,39 @@ def vcf2neofox_cli():
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter, epilog=epilog)
     parser.add_argument("--output-table", dest="output_table", action="store",
                         help="The path to the output table in NeoFox format", required=True)
-    # TODO: add arguments
+    parser.add_argument(
+        "--patient-id",
+        dest="patients_id",
+        help="Patient identifier",
+        required=True,
+    )
+    parser.add_argument(
+        "--vcf",
+        dest="vcf",
+        help="Mutations",
+        required=True,
+    )
+    parser.add_argument(
+        "--fasta",
+        dest="fasta",
+        help="reference genome",
+        required=True,
+    )
+    parser.add_argument(
+        "--gtf",
+        dest="gtf",
+        help="gene annotations",
+        required=True,
+    )
     args = parser.parse_args()
     
     logging.info("VCF2neofox starting...")
     
     # VCF Input File
-    vcf_file = "data/H018-RM7N.varscan2.hc.vcf"
+    vcf_file = args.vcf
     
     # Read references
-    reference_genome, gtf = data_loading.load_references('grch37')
+    reference_genome, gtf = data_loading.load_references(gtf=args.gtf, fasta=args.fasta)
     
     # Load VCF
     vcf = VCF(vcf_file)
@@ -35,7 +58,6 @@ def vcf2neofox_cli():
     for v in vcf:
         
         variant = v
-        transcripts = None
         # get overlapping transcripts
         transcripts = tools.get_overlapping_transcripts(gtf, variant)
         # Stop if the variant is out of transcript regions
@@ -44,7 +66,6 @@ def vcf2neofox_cli():
         
         # Check overlapping exons for each transcript
         for tr_id in transcripts.transcript_id:
-            exons = None
             exons = tools.get_exons(gtf, reference_genome, tr_id)
             if (not tools.is_coding(exons, variant)) | (exons is None):
                 continue
@@ -60,14 +81,14 @@ def vcf2neofox_cli():
             normal_protein = tools.translate(dna_sequence, strand)
             mutated_protein = tools.translate(mutated_sequence, strand)
             
-            neoantigen = tools.build_neoantigen(normal_protein, mutated_protein)
+            neoantigen = tools.build_neoantigen(normal_protein, mutated_protein, patient_identifier=args.patient_id)
             
             # Create output table
             if neoantigen is not None:
                 neoantigens.append(neoantigen)
 
     # writes a CSV with neoantigens
-    neoantigens_df = neofox.model.conversion.ModelConverter().annotations2table(neoantigens)
+    neoantigens_df = neofox.model.conversion.ModelConverter.annotations2neoantigens_table(neoantigens)
     neoantigens_df.to_csv(args.output_table, sep='\t', index=False)
 
     logging.info("VCF2neofox finished!")
