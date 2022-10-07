@@ -1,7 +1,7 @@
 import argparse
 
 import neofox.model.conversion
-
+import pandas as pd
 import vcf2neofox
 from logzero import logger
 import vcf2neofox.modulation_tools as tools
@@ -95,7 +95,9 @@ def vcf2neofox_cli():
                 neoantigens.append(neoantigen)
 
     # writes a CSV with neoantigens
-    neoantigens_df = neofox.model.conversion.ModelConverter.annotations2neoantigens_table(neoantigens)
+    neoantigens_df = pd.json_normalize(
+        data=[n.to_dict(include_default_values=True) for n in neoantigens]
+    )
     neoantigens_df.to_csv(args.output_table, sep='\t', index=False)
 
-    logging.info("VCF2neofox finished!")
+    logger.info("VCF2neofox finished!")
