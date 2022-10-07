@@ -3,7 +3,7 @@ import argparse
 import neofox.model.conversion
 
 import vcf2neofox
-import logging
+from logzero import logger
 import vcf2neofox.modulation_tools as tools
 import vcf2neofox.data_loading as data_loading
 from cyvcf2 import VCF
@@ -43,15 +43,17 @@ def vcf2neofox_cli():
     )
     args = parser.parse_args()
     
-    logging.info("VCF2neofox starting...")
+    logger.info("VCF2neofox starting...")
     
     # VCF Input File
     vcf_file = args.vcf
     
     # Read references
+    logger.info("Reading references...")
     reference_genome, gtf = data_loading.load_references(gtf=args.gtf, fasta=args.fasta)
     
     # Load VCF
+    logger.info("Reading VCF...")
     vcf = VCF(vcf_file)
     neoantigens = []
     # Iterate variants
@@ -83,8 +85,9 @@ def vcf2neofox_cli():
 
             try:
                 neoantigen = tools.build_neoantigen(normal_protein, mutated_protein, patient_identifier=args.patient_id)
-            except ValueError as ex:
+            except Exception as ex:
                 # skip failing Neoantigen (eg: sequences containing * or invalid AAs)
+                logger.warning(ex)
                 continue
             
             # Create output table
