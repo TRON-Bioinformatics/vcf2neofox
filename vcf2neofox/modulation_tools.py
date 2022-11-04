@@ -24,7 +24,7 @@ def get_exons(gtf, reference_genome, transcript_id):
         exon_sequences.append(reference_genome.fetch(exon.seqname.strip("chr"), exon.start - 1, exon.end))    
     exons["sequence"] = exon_sequences
     exons["sequence_len"] = exons["sequence"].transform(len)
-    exons = exons[["exon_id", "seqname", "start", "end", "strand", "exon_number", "sequence", "sequence_len"]]
+    exons = exons[["gene_name", "exon_id", "seqname", "start", "end", "strand", "exon_number", "sequence", "sequence_len"]]
     return(exons)
 
 
@@ -73,7 +73,7 @@ def translate(dna, strand):
 
 
 # Generate epitope sequence
-def build_neoantigen(seq_mutated_sequence: str, seq_wt_sequence: str, patient_identifier: str) -> Neoantigen:
+def build_neoantigen(seq_mutated_sequence: str, seq_wt_sequence: str, patient_identifier: str, gene: str) -> Neoantigen:
     # Find the mutated aminoacid in the protein and generate the neoepitopes
     aa_position = 0
     for ref, alt in zip(seq_wt_sequence, seq_mutated_sequence):
@@ -89,7 +89,9 @@ def build_neoantigen(seq_mutated_sequence: str, seq_wt_sequence: str, patient_id
         neoantigen = NeoantigenFactory.build_neoantigen(
             mutated_xmer=mutated_xmer,
             wild_type_xmer=wt_xmer,
-            patient_identifier=patient_identifier
+            patient_identifier=patient_identifier,
+            gene=gene,
+            position=14
         )
 
     return neoantigen

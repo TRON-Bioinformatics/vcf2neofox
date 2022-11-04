@@ -72,8 +72,12 @@ def vcf2neofox_cli():
             if (not tools.is_coding(exons, variant)) | (exons is None):
                 continue
             
+            if (not tools.is_coding(exons, variant)) | (exons is None):
+                continue
+            
             # Create dna sequence for normal and mutated protein
             dna_sequence, mutated_sequence = tools.create_coding_regions(exons, variant)
+            
             strand = None
             if exons.strand.unique() == "-":
                 strand = "-"
@@ -82,16 +86,18 @@ def vcf2neofox_cli():
             
             normal_protein = tools.translate(dna_sequence, strand)
             mutated_protein = tools.translate(mutated_sequence, strand)
-
+            gene = exons.gene_name.drop_duplicates().iloc[0]
+            
+            # Create neoantigen model
             try:
-                neoantigen = tools.build_neoantigen(normal_protein, mutated_protein, patient_identifier=args.patient_id)
+                neoantigen = tools.build_neoantigen(normal_protein, mutated_protein, patient_identifier=args.patient_id, gene = gene)
             except Exception as ex:
                 # skip failing Neoantigen (eg: sequences containing * or invalid AAs)
                 logger.warning(ex)
                 continue
             
             # Create output table
-            if neoantigen is not None:
+            if (neoantigen is not None) & (neoantigen not in neoantigens):
                 neoantigens.append(neoantigen)
 
     # writes a CSV with neoantigens
