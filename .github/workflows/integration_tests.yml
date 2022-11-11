@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python-version: [ 3.7, 3.8, 3.9, 3.10 ]
+        python-version: [ 3.8.8 ]
 
     steps:
     - uses: actions/checkout@v2
@@ -24,10 +24,10 @@ jobs:
         pip install setuptools wheel cython
         # this is needed by cyvcf2 and pysam
         conda install htslib=1.14
-    - name: Install vafator
+    - name: Install vcf2neofox
       run: |
         python setup.py bdist_wheel
-        pip install dist/*
+        pip install dist/*.whl
     - name: Run integration tests
       run: |
         make clean integration_tests

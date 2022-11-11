@@ -41,6 +41,12 @@ def vcf2neofox_cli():
         help="gene annotations",
         required=True,
     )
+    parser.add_argument(
+        "--tumor-type",
+        dest="tumor_type",
+        help="Tumor type (used for expression imputation)",
+        required=False,
+    )
     args = parser.parse_args()
     
     logger.info("VCF2neofox starting...")
@@ -90,7 +96,11 @@ def vcf2neofox_cli():
             
             # Create neoantigen model
             try:
-                neoantigen = tools.build_neoantigen(normal_protein, mutated_protein, patient_identifier=args.patient_id, gene = gene)
+                neoantigen = tools.build_neoantigen(
+                    normal_protein, 
+                    mutated_protein, 
+                    patient_identifier=args.patient_id, 
+                    gene = gene)
             except Exception as ex:
                 # skip failing Neoantigen (eg: sequences containing * or invalid AAs)
                 logger.warning(ex)
