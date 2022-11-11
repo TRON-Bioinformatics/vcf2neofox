@@ -73,7 +73,12 @@ def translate(dna, strand):
 
 
 # Generate epitope sequence
-def build_neoantigen(seq_mutated_sequence: str, seq_wt_sequence: str, patient_identifier: str = "p", gene: str = "") -> Neoantigen:
+def build_neoantigen(
+    seq_mutated_sequence: str, 
+    seq_wt_sequence: str, 
+    patient_identifier: str, 
+    gene: str = None) -> Neoantigen:
+
     # Find the mutated aminoacid in the protein and generate the neoepitopes
     aa_position = 0
     for ref, alt in zip(seq_wt_sequence, seq_mutated_sequence):
